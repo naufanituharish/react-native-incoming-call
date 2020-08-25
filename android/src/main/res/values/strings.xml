@@ -1,4 +1,8 @@
 <resources>
     <string name="accept">Video</string>
     <string name="decline">Decline</string>
+    <string name="is_calling">is calling</string>
+    <string name="somebody">Somebody</string>
+    <string name="notificationDecline">DECLINE</string>
+    <string name="notificationAnswer">ANSWER</string>   
 </resources>

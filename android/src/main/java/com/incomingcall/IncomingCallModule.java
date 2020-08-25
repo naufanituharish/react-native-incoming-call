@@ -2,6 +2,7 @@ package com.incomingcall;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Build;
 import android.app.Activity;
 import android.view.WindowManager;
 import android.content.Context;
@@ -14,6 +15,9 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+
+import com.incomingcall.NotificationHelper;
+import com.incomingcall.ForegroundCheck;
 
 public class IncomingCallModule extends ReactContextBaseJavaModule {
 
@@ -45,14 +49,15 @@ public class IncomingCallModule extends ReactContextBaseJavaModule {
             bundle.putString("name", name);
             bundle.putString("avatar", avatar);
             bundle.putString("info", info);
-            Intent i = new Intent(reactContext, UnlockScreenActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            i.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED +
-            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD +
-            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-            
-            i.putExtras(bundle);
-            reactContext.startActivity(i);
+            Intent incomingCallIntent = new Intent(reactContext, UnlockScreenActivity.class);
+            incomingCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);              
+            incomingCallIntent.putExtras(bundle);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !ForegroundCheck.get().isForeground()) {
+                NotificationHelper.showCallNotification(reactContext, incomingCallIntent, name);
+            } else {
+                reactContext.startActivity(incomingCallIntent);
+            }
+            // reactContext.startActivity(i);
         }
     }
 
